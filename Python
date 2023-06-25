@@ -1,0 +1,53 @@
+import pandas as pd
+import numpy as np
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+
+mcdonalds = pd.read_csv("MSA::mcdonalds.csv")
+
+# Print column names
+print(mcdonalds.columns)
+
+# Print dimensions
+print(mcdonalds.shape)
+
+# Print first 3 rows
+print(mcdonalds.head(3))
+
+MD_x = mcdonalds.iloc[:, 0:11].values
+MD_x = (MD_x == "Yes").astype(int)
+
+col_means = np.round(np.mean(MD_x, axis=0), 2)
+print(col_means)
+
+pca = PCA()
+MD_pca = pca.fit_transform(MD_x)
+
+# Print standard deviations
+print("Standard deviations (1, .., p=11):")
+print(pca.explained_variance_)
+
+# Standardize the data
+scaler = StandardScaler()
+MD_x_scaled = scaler.fit_transform(MD_x)
+
+# Perform PCA
+pca = PCA()
+MD_pca = pca.fit_transform(MD_x_scaled)
+
+# Plot PCA projections
+plt.scatter(MD_pca[:, 0], MD_pca[:, 1], color="grey")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.title("PCA Projections")
+plt.show()
+
+# Plot projection axes
+plt.plot([0, pca.components_[0, 0]], [0, pca.components_[0, 1]], color="red", label="PC1")
+plt.plot([0, pca.components_[1, 0]], [0, pca.components_[1, 1]], color="blue", label="PC2")
+plt.xlabel("Feature Space")
+plt.ylabel("PCA Space")
+plt.title("Projection Axes")
+plt.legend()
+plt.show()
